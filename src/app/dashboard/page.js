@@ -103,7 +103,7 @@ export default function DashboardPage() {
 
   const handleAddServer = () => {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-    const redirectUri = encodeURIComponent('http://localhost:3000/api/discord/callback');
+    const redirectUri = encodeURIComponent(window.location.origin + '/api/discord/callback');
     if (!clientId || clientId === 'tuo_client_id_qui') {
       alert('Configura il Client ID nel file .env.local!');
       return;
