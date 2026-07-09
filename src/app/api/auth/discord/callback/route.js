@@ -18,7 +18,7 @@ export async function GET(request) {
 
     const clientId = process.env.DISCORD_CLIENT_ID || process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
     const clientSecret = process.env.DISCORD_CLIENT_SECRET;
-    const redirectUri = 'http://localhost:3000/api/auth/discord/callback';
+    const redirectUri = url.origin + '/api/auth/discord/callback';
 
     // Exchange code for token
     const tokenParams = new URLSearchParams();
