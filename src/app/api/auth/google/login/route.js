@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = 'http://localhost:3000/api/auth/google/callback';
+  const url = new URL(request.url);
+  const redirectUri = url.origin + '/api/auth/google/callback';
   
   if (!clientId) {
-    return NextResponse.json({ error: 'Google Client ID not configured' }, { status: 500 });
+    return NextResponse.json({ error: 'ID client Google non configurato' }, { status: 500 });
   }
 
   const scopes = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'];
