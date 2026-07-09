@@ -62,10 +62,10 @@ export default function Navbar() {
                 <div className="flex items-center gap-3 ml-2">
                   <Link href="/dashboard" className="flex items-center gap-2 group">
                     <div className="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center font-bold group-hover:bg-accent group-hover:text-white transition-all">
-                      {user.username.charAt(0).toUpperCase()}
+                      {(user.username || user.email || '?').charAt(0).toUpperCase()}
                     </div>
                     <span className="text-sm font-medium text-muted group-hover:text-foreground transition-colors">
-                      {user.username}
+                      {user.username || user.email || 'User'}
                     </span>
                   </Link>
                   <button onClick={logout} className="text-sm text-red-400/80 hover:text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/10 transition-colors cursor-pointer">
