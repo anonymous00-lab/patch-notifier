@@ -8,7 +8,7 @@ export async function POST() {
     const sessionId = cookieStore.get('session_id')?.value;
 
     if (sessionId) {
-      db.deleteSession(sessionId);
+      await db.deleteSession(sessionId);
     }
 
     cookieStore.delete('session_id');
@@ -19,3 +19,4 @@ export async function POST() {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

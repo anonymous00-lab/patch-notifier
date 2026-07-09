@@ -15,7 +15,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
     }
 
-    const existingUser = db.getUserByEmail(email);
+    const existingUser = await db.getUserByEmail(email);
     if (existingUser) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
     }
@@ -23,8 +23,8 @@ export async function POST(request) {
     // Auto-generate username from email
     const username = email.split('@')[0];
 
-    const user = db.createUser(email, username, password);
-    const { sessionId, expiresAt } = db.createSession(user.id);
+    const user = await db.createUser(email, username, password);
+    const { sessionId, expiresAt } = await db.createSession(user.id);
 
     const cookieStore = await cookies();
     cookieStore.set('session_id', sessionId, {
@@ -44,3 +44,4 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

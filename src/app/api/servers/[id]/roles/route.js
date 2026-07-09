@@ -10,13 +10,13 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const session = db.getSession(sessionId);
+    const session = await db.getSession(sessionId);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
-    const server = db.getServerById(id);
+    const server = await db.getServerById(id);
     
     if (!server || server.user_id !== session.user_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

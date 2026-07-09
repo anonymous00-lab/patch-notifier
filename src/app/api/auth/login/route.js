@@ -10,12 +10,12 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 
-    const user = db.getUserByEmail(email);
+    const user = await db.getUserByEmail(email);
     if (!user || !db.verifyPassword(password, user.password_hash)) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const { sessionId, expiresAt } = db.createSession(user.id);
+    const { sessionId, expiresAt } = await db.createSession(user.id);
 
     const cookieStore = await cookies();
     cookieStore.set('session_id', sessionId, {
@@ -39,3 +39,4 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

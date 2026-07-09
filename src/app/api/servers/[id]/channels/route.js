@@ -13,12 +13,12 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const session = db.getSession(sessionId);
+    const session = await db.getSession(sessionId);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const server = db.getServerById(serverId);
+    const server = await db.getServerById(serverId);
     if (!server || server.user_id !== session.user_id) {
       return NextResponse.json({ error: 'Server not found' }, { status: 404 });
     }

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request) {
   try {
     const db = require('@/lib/db');
-    let games = db.getAllGames();
+    let games = await db.getAllGames();
 
     // Optional search filter
     const { searchParams } = new URL(request.url);
@@ -25,3 +25,4 @@ export async function GET(request) {
     );
   }
 }
+

@@ -8,9 +8,9 @@ export async function POST(request) {
 
     if (action === 'request') {
       if (!email) return NextResponse.json({ error: 'Missing email' }, { status: 400 });
-      const user = db.getUserByEmail(email);
+      const user = await db.getUserByEmail(email);
       if (user) {
-        const resetToken = db.createPasswordResetToken(user.id);
+        const resetToken = await db.createPasswordResetToken(user.id);
         sendPasswordResetEmail(email, resetToken).catch(console.error);
       }
       // Always return success even if email not found to prevent user enumeration
@@ -21,7 +21,7 @@ export async function POST(request) {
       if (!token || !newPassword) return NextResponse.json({ error: 'Missing token or password' }, { status: 400 });
       if (newPassword.length < 6) return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
       
-      const success = db.resetPassword(token, newPassword);
+      const success = await db.resetPassword(token, newPassword);
       if (!success) {
         return NextResponse.json({ error: 'Invalid or expired token' }, { status: 400 });
       }
@@ -34,3 +34,4 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

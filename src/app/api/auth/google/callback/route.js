@@ -53,7 +53,7 @@ export async function GET(request) {
     const googleUser = await userRes.json();
     
     // Check if user exists by Google ID
-    let user = db.getUserByProviderId('google', googleUser.id);
+    let user = await db.getUserByProviderId('google', googleUser.id);
     
     if (!user) {
       // Check if user exists by email
@@ -62,17 +62,17 @@ export async function GET(request) {
         return NextResponse.redirect(new URL('/login?error=google_no_email', request.url));
       }
       
-      const existingUser = db.getUserByEmail(email);
+      const existingUser = await db.getUserByEmail(email);
       if (existingUser) {
         return NextResponse.redirect(new URL('/login?error=email_already_used', request.url));
       }
 
       // Create new OAuth user
-      user = db.createUserOAuth(email, googleUser.name || googleUser.given_name, 'google', googleUser.id, googleUser.picture);
+      user = await db.createUserOAuth(email, googleUser.name || googleUser.given_name, 'google', googleUser.id, googleUser.picture);
     }
 
     // Create session
-    const { sessionId, expiresAt } = db.createSession(user.id);
+    const { sessionId, expiresAt } = await db.createSession(user.id);
     const cookieStore = await cookies();
     cookieStore.set('session_id', sessionId, {
       httpOnly: true,
@@ -89,3 +89,4 @@ export async function GET(request) {
     return NextResponse.redirect(new URL('/login?error=internal_error', request.url));
   }
 }
+

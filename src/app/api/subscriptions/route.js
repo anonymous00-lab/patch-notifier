@@ -13,14 +13,14 @@ export async function GET(request) {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get('session_id')?.value;
     if (!sessionId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const session = db.getSession(sessionId);
+    const session = await db.getSession(sessionId);
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     if (serverId) {
-      const subs = db.getSubscriptionsForServer(serverId);
+      const subs = await db.getSubscriptionsForServer(serverId);
       return NextResponse.json(subs);
     } else if (gameId) {
-      const subs = db.getSubscriptionsForGame(gameId);
+      const subs = await db.getSubscriptionsForGame(gameId);
       return NextResponse.json(subs);
     }
 
@@ -36,7 +36,7 @@ export async function POST(request) {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get('session_id')?.value;
     if (!sessionId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const session = db.getSession(sessionId);
+    const session = await db.getSession(sessionId);
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
@@ -46,16 +46,16 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    const server = db.getServerById(serverId);
+    const server = await db.getServerById(serverId);
     if (!server || server.user_id !== session.user_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     if (action === 'subscribe') {
-      db.subscribe(serverId, channelId, gameId);
+      await db.subscribe(serverId, channelId, gameId);
       
       // Send a DEMO patch note to show it works!
-      const game = db.getGameById(gameId);
+      const game = await db.getGameById(gameId);
       if (game) {
         const demoNote = {
           title: `🛠️ ${game.name} - DEMO Update`,
@@ -70,10 +70,10 @@ export async function POST(request) {
       }
       
     } else if (action === 'unsubscribe') {
-      db.unsubscribe(serverId, channelId, gameId);
+      await db.unsubscribe(serverId, channelId, gameId);
     } else if (action === 'updateSettings') {
       const { pin_messages, use_threads, mention_roles } = body;
-      db.updateSubscriptionSettings(serverId, channelId, gameId, pin_messages, use_threads, mention_roles);
+      await db.updateSubscriptionSettings(serverId, channelId, gameId, pin_messages, use_threads, mention_roles);
     } else {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
@@ -84,3 +84,4 @@ export async function POST(request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+

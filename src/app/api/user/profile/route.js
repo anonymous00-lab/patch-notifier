@@ -15,12 +15,12 @@ export async function PUT(request) {
     }
 
     // Check if new email is already taken by someone else
-    const existing = db.getUserByEmail(email);
+    const existing = await db.getUserByEmail(email);
     if (existing && existing.id !== user.id) {
       return NextResponse.json({ error: 'Email already in use' }, { status: 400 });
     }
 
-    const updatedUser = db.updateUserProfile(user.id, email, username);
+    const updatedUser = await db.updateUserProfile(user.id, email, username);
 
     return NextResponse.json({ user: updatedUser });
   } catch (err) {
@@ -28,3 +28,4 @@ export async function PUT(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

@@ -18,7 +18,7 @@ async function runWorker() {
   
   try {
     // 1. Get all active games
-    const games = db.prepare('SELECT * FROM games WHERE is_active = 1').all();
+    const games = await db.prepare('SELECT * FROM games WHERE is_active = 1').all();
     
     for (const game of games) {
       // 2. Fetch updates
@@ -29,7 +29,7 @@ async function runWorker() {
         // ... (insert into patch_notes)
         
         // 4. Notify all subscribed channels
-        const subs = db.prepare('SELECT channel_id, pin_messages, use_threads, mention_roles FROM subscriptions WHERE game_id = ?').all(game.id);
+        const subs = await db.prepare('SELECT channel_id, pin_messages, use_threads, mention_roles FROM subscriptions WHERE game_id = ?').all(game.id);
         if (subs.length > 0) {
           console.log(`[Worker] Found ${subs.length} subscriptions for ${game.name}. Sending...`);
           const payload = formatPatchNoteEmbed(newUpdate, game);

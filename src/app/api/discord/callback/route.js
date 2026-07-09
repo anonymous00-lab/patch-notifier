@@ -27,7 +27,7 @@ export async function GET(request) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    const session = db.getSession(sessionId);
+    const session = await db.getSession(sessionId);
     if (!session) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -63,7 +63,7 @@ export async function GET(request) {
     }
 
     // Register the server in our DB
-    db.registerServer(guildId, guildName, guildIcon, session.user_id);
+    await db.registerServer(guildId, guildName, guildIcon, session.user_id);
 
     // Success! Redirect to dashboard
     return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -73,3 +73,4 @@ export async function GET(request) {
     return NextResponse.redirect(new URL('/dashboard?error=internal_error', request.url));
   }
 }
+

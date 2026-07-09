@@ -25,7 +25,7 @@ export async function POST(request) {
       );
     }
 
-    const webhook = db.registerWebhook(url, {
+    const webhook = await db.registerWebhook(url, {
       userId: user?.id || null,
       guildName,
       channelName,
@@ -42,3 +42,4 @@ export async function POST(request) {
     );
   }
 }
+

@@ -9,7 +9,7 @@ export async function POST(request) {
     const cookieStore = await cookies();
     const sessionId = cookieStore.get('session_id')?.value;
     if (!sessionId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const session = db.getSession(sessionId);
+    const session = await db.getSession(sessionId);
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { serverId, channelId, gameId } = await request.json();
@@ -18,17 +18,17 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Missing parameters' }, { status: 400 });
     }
 
-    const server = db.getServerById(serverId);
+    const server = await db.getServerById(serverId);
     if (!server || server.user_id !== session.user_id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const game = db.getGameById(gameId);
+    const game = await db.getGameById(gameId);
     if (!game) {
       return NextResponse.json({ error: 'Game not found' }, { status: 404 });
     }
 
-    const subscriptions = db.getSubscriptionsForServer(serverId);
+    const subscriptions = await db.getSubscriptionsForServer(serverId);
     const sub = subscriptions.find(s => s.channel_id === channelId && s.game_id === gameId);
     
     if (!sub) {
@@ -36,7 +36,7 @@ export async function POST(request) {
     }
 
     // Try to get the latest actual patch note for this game
-    const patchNotes = db.getRecentPatchNotes(game.id, 1);
+    const patchNotes = await db.getRecentPatchNotes(game.id, 1);
     
     let noteToSend;
     if (patchNotes && patchNotes.length > 0) {
@@ -71,3 +71,4 @@ export async function POST(request) {
     return NextResponse.json({ error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }
+

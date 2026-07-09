@@ -9,7 +9,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const webhooks = db.getWebhooksForUser(user.id);
+    const webhooks = await db.getWebhooksForUser(user.id);
     return NextResponse.json({ webhooks });
   } catch (err) {
     console.error('[API /user/webhooks]', err);
@@ -29,10 +29,11 @@ export async function DELETE(request) {
       return NextResponse.json({ error: 'Missing webhook_id' }, { status: 400 });
     }
 
-    db.deleteWebhook(webhook_id, user.id);
+    await db.deleteWebhook(webhook_id, user.id);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[API DELETE /user/webhooks]', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

@@ -19,7 +19,7 @@ export async function GET(request) {
       );
     }
 
-    const patchNotes = db.getRecentPatchNotes(Number(gameId), limit);
+    const patchNotes = await db.getRecentPatchNotes(Number(gameId), limit);
 
     return NextResponse.json({ patch_notes: patchNotes });
   } catch (err) {
@@ -30,3 +30,4 @@ export async function GET(request) {
     );
   }
 }
+

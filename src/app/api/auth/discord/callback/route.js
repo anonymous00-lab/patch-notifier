@@ -54,7 +54,7 @@ export async function GET(request) {
     const discordUser = await userRes.json();
     
     // Check if user exists by Discord ID
-    let user = db.getUserByProviderId('discord', discordUser.id);
+    let user = await db.getUserByProviderId('discord', discordUser.id);
     
     if (!user) {
       // Check if user exists by email
@@ -63,7 +63,7 @@ export async function GET(request) {
         return NextResponse.redirect(new URL('/login?error=discord_no_email', request.url));
       }
       
-      const existingUser = db.getUserByEmail(email);
+      const existingUser = await db.getUserByEmail(email);
       if (existingUser) {
         // Link discord account to existing email
         // For simplicity we could just fail, or we can update the user.
@@ -73,11 +73,11 @@ export async function GET(request) {
 
       // Create new OAuth user
       const avatarUrl = discordUser.avatar ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : null;
-      user = db.createUserOAuth(email, discordUser.username, 'discord', discordUser.id, avatarUrl);
+      user = await db.createUserOAuth(email, discordUser.username, 'discord', discordUser.id, avatarUrl);
     }
 
     // Create session
-    const { sessionId, expiresAt } = db.createSession(user.id);
+    const { sessionId, expiresAt } = await db.createSession(user.id);
     const cookieStore = await cookies();
     cookieStore.set('session_id', sessionId, {
       httpOnly: true,
@@ -94,3 +94,4 @@ export async function GET(request) {
     return NextResponse.redirect(new URL('/login?error=internal_error', request.url));
   }
 }
+

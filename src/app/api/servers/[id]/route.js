@@ -10,14 +10,14 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const session = db.getSession(sessionId);
+    const session = await db.getSession(sessionId);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
     
-    db.deleteServer(id, session.user_id);
+    await db.deleteServer(id, session.user_id);
     
     return NextResponse.json({ success: true });
   } catch (err) {
